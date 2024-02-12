@@ -36,7 +36,6 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	// perform some logic
 	log.Println("ABOUT")
 
 	remoteIP := m.App.Session.GetString(r.Context(), "remote_ip")
