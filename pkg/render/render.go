@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"text/template"
 
+	"github.com/justinas/nosurf"
 	"github.com/rajath002/bookings/pkg/config"
 	"github.com/rajath002/bookings/pkg/models"
 )
@@ -17,11 +18,12 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
-func RenderTemplateDynamicCache(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+func RenderTemplateDynamicCache(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
 	// Create a template cache
 	var tc map[string]*template.Template
 	if app.UseCache {
@@ -38,7 +40,7 @@ func RenderTemplateDynamicCache(w http.ResponseWriter, tmpl string, td *models.T
 
 	buf := new(bytes.Buffer)
 
-	td = AddDefaultData(td)
+	td = AddDefaultData(td, r)
 	_ = t.Execute(buf, td)
 
 	// render the template
