@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rajath002/bookings/pkg/config"
-	"github.com/rajath002/bookings/pkg/models"
-	"github.com/rajath002/bookings/pkg/render"
+	"github.com/rajath002/bookings/internal/config"
+	"github.com/rajath002/bookings/internal/models"
+	"github.com/rajath002/bookings/internal/render"
 )
 
 var Repo *Repository
