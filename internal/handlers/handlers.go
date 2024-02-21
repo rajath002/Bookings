@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/rajath002/bookings/internal/config"
+	"github.com/rajath002/bookings/internal/forms"
 	"github.com/rajath002/bookings/internal/models"
 	"github.com/rajath002/bookings/internal/render"
 )
@@ -92,7 +93,17 @@ func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
 	w.Write(out)
 }
 
-func (m *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
-	log.Println("MakeReservation")
-	render.RenderTemplateDynamicCache(w, r, "make-reservation.page.tmpl", &models.TemplateData{})
+func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	log.Println("Reservation")
+	render.RenderTemplateDynamicCache(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+		Form: forms.New(nil),
+	})
+}
+
+// Handles the posting of a reservation form
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	log.Println("Post Reservation")
+	// render.RenderTemplateDynamicCache(w, r, "make-reservation.page.tmpl", &models.TemplateData{
+	// 	Form: forms.New(nil),
+	// })
 }
