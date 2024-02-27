@@ -38,5 +38,5 @@ go tool cover -html=coverage
 Or you can combine and run last two commands. but it won't work in Windows
 
 ```bash
-go test -coverprofile=coverage.out | go tool cover -html=coverage.out
+go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
