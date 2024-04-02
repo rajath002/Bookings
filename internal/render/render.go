@@ -2,6 +2,7 @@ package render
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -31,7 +32,8 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	return td
 }
 
-func RenderTemplateDynamicCache(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
+// Renders html/template
+func RenderTemplateDynamicCache(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) error {
 	// Create a template cache
 	var tc map[string]*template.Template
 	if app.UseCache {
@@ -43,7 +45,7 @@ func RenderTemplateDynamicCache(w http.ResponseWriter, r *http.Request, tmpl str
 	// get a requested template cache
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal("Could not get the template from the template cache")
+		return errors.New("could not get the template from the template cache")
 	}
 
 	buf := new(bytes.Buffer)
@@ -55,7 +57,10 @@ func RenderTemplateDynamicCache(w http.ResponseWriter, r *http.Request, tmpl str
 	_, err := buf.WriteTo(w)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
+
+	return nil
 }
 
 func CreateTemplateDynamicCache() (map[string]*template.Template, error) {
