@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/gob"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
-	"text/template"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/justinas/nosurf"
 	"github.com/rajath002/bookings/internal/config"
+	"github.com/rajath002/bookings/internal/helpers"
 	"github.com/rajath002/bookings/internal/models"
 	"github.com/rajath002/bookings/internal/render"
 )
@@ -21,14 +23,23 @@ import (
 var functions = template.FuncMap{}
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 var pathToTemplates = "./../../templates"
 
 func getRoutes() http.Handler {
 	// what I'm going to put in session
 	gob.Register(models.Reservation{})
+	helpers.NewHelpers(&app)
 
 	// change this to true when in Production
 	app.InProduction = false
+
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog
 
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
