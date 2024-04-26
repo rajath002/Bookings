@@ -40,3 +40,38 @@ Or you can combine and run last two commands. but it won't work in Windows
 ```bash
 go test -coverprofile=coverage.out && go tool cover -html=coverage.out
 ```
+
+
+## Creating Migrations tables
+
+### used below commands to generate migration tables
+
+```bash
+soda generate fizz CreateRoomsTable
+
+soda generate fizz CreateRestrictionTable  
+
+soda generate fizz createReservationsTable
+
+soda generate fizz CreateRoomRestrictionsTable
+
+soda generate fizz CreateUsersTable
+```
+
+### Add Foreign key to a table
+
+```bash
+soda generate fizz CreateFKForReservationsTable
+```
+
+### Run below command to create tables and to add Foreign Keys
+
+```bash
+soda migrate 
+```
+
+### Run below command to Remove the table
+
+```bash
+soda migrate down 
+```
