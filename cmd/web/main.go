@@ -10,6 +10,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/rajath002/bookings/internal/config"
+	"github.com/rajath002/bookings/internal/driver"
 	"github.com/rajath002/bookings/internal/handlers"
 	"github.com/rajath002/bookings/internal/helpers"
 	"github.com/rajath002/bookings/internal/models"
@@ -24,11 +25,12 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err := run()
-
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer db.SQL.Close()
 
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
@@ -41,7 +43,7 @@ func main() {
 	log.Fatal(err)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// what I'm going to put in session
 	gob.Register(models.Reservation{})
 	helpers.NewHelpers(&app)
@@ -62,20 +64,29 @@ func run() error {
 	session.Cookie.Secure = app.InProduction
 	app.Session = session
 
+	// connect to Database
+	log.Println("Connecting to Database...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=mysecretpassword")
+	if err != nil {
+		log.Fatal("Cannot connect to database! Dying...")
+	}
+	log.Println("Connected to Database...")
+
 	tc, err := render.CreateTemplateDynamicCache()
 
 	if err != nil {
 		log.Fatal("Cannot create template cache")
-		return err
+		return nil, err
 	}
 
 	app.TemplateCache = tc
 	app.UseCache = true
 
-	repo := handlers.NewRepo(&app)
+	// db is the driver which we are passing to NewRepo, so it will be avaialble to all the handlers
+	repo := handlers.NewRepo(&app, db)
 
 	handlers.NewHandlers(repo)
 
 	render.NewTemplates(&app)
-	return nil
+	return db, nil
 }
