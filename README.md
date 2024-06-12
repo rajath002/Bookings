@@ -9,13 +9,15 @@ This is the repository for bookings and reservations project.
 
 ## Running Tests
 
-go to `./cmd/web` path
 
 > Run all tests in one command using below command (Make sure your in root of your application)
 ```bash
 go test -v ./...
 ```
 ### OR
+
+go to `./cmd/web` path
+
 > Run below commands one by one, by going to the test files location
 
 
