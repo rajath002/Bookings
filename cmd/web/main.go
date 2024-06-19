@@ -91,6 +91,6 @@ func run() (*driver.DB, error) {
 
 	handlers.NewHandlers(repo)
 
-	render.NewRenerer(&app)
+	render.NewRenderer(&app)
 	return db, nil
 }
