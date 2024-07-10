@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -27,7 +28,7 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 var pathToTemplates = "./../../templates"
 
-func getRoutes() http.Handler {
+func TestMain(m *testing.M) {
 	// what I'm going to put in session
 	gob.Register(models.Reservation{})
 	helpers.NewHelpers(&app)
@@ -62,6 +63,11 @@ func getRoutes() http.Handler {
 	NewHandlers(repo)
 
 	render.NewRenderer(&app)
+
+	os.Exit(m.Run())
+}
+
+func getRoutes() http.Handler {
 
 	mux := chi.NewRouter()
 

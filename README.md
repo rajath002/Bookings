@@ -30,8 +30,9 @@ go test -v
 ```
 
 ```bash
-go test -cover
+go test -cover ./...
 ```
+- add `./...` only when you want to run it from Root (Globally)
 
 ```bash
 go test -coverprofile=coverage

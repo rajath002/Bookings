@@ -66,14 +66,18 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	res, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation)
 	if !ok {
-		helpers.ServerError(w, errors.New("Cannot get reservation from session"))
+		m.App.Session.Put(r.Context(), "error", "Can't get the reservation from session")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		// helpers.ServerError(w, errors.New("cannot get reservation from session"))
 		return
 	}
 
-	room, err := m.DB.GetRoomID(res.RoomID)
+	room, err := m.DB.GetRoomByID(res.RoomID)
 
 	if err != nil {
-		helpers.ServerError(w, err)
+		m.App.Session.Put(r.Context(), "error", "Can't find room!")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		// helpers.ServerError(w, err)
 		return
 	}
 
@@ -323,7 +327,7 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 
 	var res models.Reservation
 
-	room, err := m.DB.GetRoomID(roomId)
+	room, err := m.DB.GetRoomByID(roomId)
 	m.App.InfoLog.Println("THE ROOM ID : ", room.ID)
 
 	if err != nil {
