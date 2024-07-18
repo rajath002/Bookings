@@ -32,6 +32,20 @@ func main() {
 
 	defer db.SQL.Close()
 
+	defer close(app.MailChan)
+
+	fmt.Println("starting mail listener.")
+	listenForMail()
+
+	// msg := models.MailData{
+	// 	To:      "john@do.ca",
+	// 	From:    "me@here.com",
+	// 	Subject: "Some Subject",
+	// 	Content: "",
+	// }
+
+	// app.MailChan <- msg
+
 	fmt.Println(fmt.Sprintf("Starting application on port %s", portNumber))
 
 	srv := &http.Server{
@@ -49,6 +63,10 @@ func run() (*driver.DB, error) {
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
 	gob.Register(models.RoomRestriction{})
+
+	// Create a channel and assign it to app reporsitory for external usage
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	helpers.NewHelpers(&app)
 
@@ -74,7 +92,7 @@ func run() (*driver.DB, error) {
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying...")
 	}
-	log.Println("Connected to Database...")
+	log.Println("Connected to Database!")
 
 	tc, err := render.CreateTemplateDynamicCache()
 
