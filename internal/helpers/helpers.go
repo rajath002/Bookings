@@ -42,3 +42,8 @@ func GetFullURL(r *http.Request) string {
 
 	return url.String()
 }
+
+func IsAuthenticated(r *http.Request) bool {
+	exists := app.Session.Exists(r.Context(), "user_id")
+	return exists
+}
