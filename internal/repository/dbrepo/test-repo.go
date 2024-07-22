@@ -91,3 +91,8 @@ func (m *testDbRepo) UpdateReservation(u models.Reservation) error {
 func (m *testDbRepo) UpdateProcessedForReservation(id, processed int) error {
 	return nil
 }
+
+// DeleteReservation a reservation by id
+func (m *testDbRepo) DeleteReservation(id int) error {
+	return nil
+}
