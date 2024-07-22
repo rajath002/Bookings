@@ -443,7 +443,7 @@ func (m *postgresDBRepo) UpdateProcessedForReservation(id, processed int) error 
 
 	query := "UPDATE reservations SET processed = $1 WHERE id = $2"
 
-	_, err := m.DB.ExecContext(ctx, query, id)
+	_, err := m.DB.ExecContext(ctx, query, processed, id)
 
 	if err != nil {
 		return err
