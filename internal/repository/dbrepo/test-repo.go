@@ -101,3 +101,9 @@ func (m *testDbRepo) AllRooms() ([]models.Room, error) {
 	var rooms []models.Room
 	return rooms, nil
 }
+
+// GetRestricationsForRoomByDate returns restrictions for a room byt date range
+func (m *testDbRepo) GetRestricationsForRoomByDate(roomID int, start, end time.Time) ([]models.RoomRestriction, error) {
+	var restrictions []models.RoomRestriction
+	return restrictions, nil
+}

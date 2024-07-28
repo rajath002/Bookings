@@ -3,6 +3,7 @@ package dbrepo
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/rajath002/bookings/internal/models"
@@ -481,4 +482,52 @@ func (m *postgresDBRepo) AllRooms() ([]models.Room, error) {
 	}
 
 	return rooms, nil
+}
+
+// GetRestricationsForRoomByDate returns restrictions for a room byt date range
+func (m *postgresDBRepo) GetRestricationsForRoomByDate(roomID int, start, end time.Time) ([]models.RoomRestriction, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var restrictions []models.RoomRestriction
+
+	query := `
+		SELECT 
+			id, coalesce(reservation_id, 0), restriction_id, room_id, start_date, end_date
+		FROM
+			room_restrictions
+		WHERE
+			$1 < end_Date
+		AND 
+			$2 >= start_date
+		AND 
+			room_id = $3
+	`
+	rows, err := m.DB.QueryContext(ctx, query, start, end, roomID)
+	if err != nil {
+		log.Println("Something went wrong : ", err)
+		return restrictions, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var r models.RoomRestriction
+		err := rows.Scan(
+			&r.ID,
+			&r.ReservationID,
+			&r.RestricationID,
+			&r.RoomID,
+			&r.StartDate,
+			&r.EndDate,
+		)
+		if err != nil {
+			return restrictions, err
+		}
+		restrictions = append(restrictions, r)
+	}
+	if err := rows.Err(); err != nil {
+		return restrictions, err
+	}
+
+	return restrictions, nil
 }

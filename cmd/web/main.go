@@ -54,6 +54,7 @@ func run() (*driver.DB, error) {
 	gob.Register(models.User{})
 	gob.Register(models.Room{})
 	gob.Register(models.RoomRestriction{})
+	gob.Register(map[string]int{})
 
 	// Create a channel and assign it to app reporsitory for external usage
 	mailChan := make(chan models.MailData)
