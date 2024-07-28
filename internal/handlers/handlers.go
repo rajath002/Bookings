@@ -649,11 +649,11 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 				}
 			} else {
 				// it's a Block
-				blockMap[y.StartDate.Format("2006-01-02")] = y.ReservationID
+				blockMap[y.StartDate.Format("2006-01-02")] = y.ID
 			}
 		}
 		data[fmt.Sprintf("reservation_map_%d", x.ID)] = reservationMap
-		data[fmt.Sprintf("block_map_%d", x.ID)] = reservationMap
+		data[fmt.Sprintf("block_map_%d", x.ID)] = blockMap
 
 		m.App.Session.Put(r.Context(), fmt.Sprintf("block_map_%d", x.ID), blockMap)
 	}
