@@ -32,6 +32,8 @@
                 </a>
             </div>
         </div>
+        <form method="post" action="/admin/reservations-calendar">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
         {{range $rooms}}
 
             {{$roomID := .ID}}
@@ -74,6 +76,9 @@
                     </tr>
                 </table>
             </div>
-        {{end}}
+            {{end}} 
+            <hr/>
+            <input type="submit" class="btn btn-primary text-white" value="Save Changes">
+        </form>
     </div>
 {{end}}
