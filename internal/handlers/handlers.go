@@ -636,6 +636,7 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 
 		//get all the restrications for the current room
 		restrictions, err := m.DB.GetRestricationsForRoomByDate(x.ID, firstOfMonth, lastOfMonth)
+		fmt.Println(x.ID, firstOfMonth, lastOfMonth)
 		if err != nil {
 			helpers.ServerError(w, err)
 			return
@@ -721,7 +722,10 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 				if val > 0 {
 					if !form.Has(fmt.Sprintf("remove_block_%d_%s", x.ID, name)) {
 						// delete the restriction by id
-						log.Println("would delete block ", value)
+						err := m.DB.DeleteBlockById(value)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 				}
 			}
@@ -736,8 +740,11 @@ func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *htt
 			roomId, _ := strconv.Atoi(exploded[2]) // grabing the room id, which is present in position 2
 
 			// Insert a new block
-			date := exploded[3]
-			log.Println("would insert block from room id", roomId, "for date", date)
+			t, _ := time.Parse("2006-01-2", exploded[3])
+			err := m.DB.InsertBlockFromRoom(roomId, t)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 
 	}
