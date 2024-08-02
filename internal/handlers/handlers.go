@@ -137,19 +137,32 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	roomId, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "can't invalid roomId")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	room, err := m.DB.GetRoomByID(roomId)
+	if err != nil {
+		m.App.Session.Put(r.Context(), "error", "invalid data")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
 	reservation.StartDate = startDate
 	reservation.EndDate = endDate
 	reservation.FirstName = r.Form.Get("first_name")
 	reservation.LastName = r.Form.Get("last_name")
 	reservation.Email = r.Form.Get("email")
 	reservation.Phone = r.Form.Get("phone")
-	reservation.RoomID, err = strconv.Atoi(r.Form.Get("room_id"))
+	reservation.RoomID = roomId
+	reservation.Room = room
 
-	if err != nil {
-		m.App.Session.Put(r.Context(), "error", "can't invalid roomId")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
+	stringMap := make(map[string]string)
+	stringMap["start_date"] = startDate.Format(layout)
+	stringMap["end_date"] = endDate.Format(layout)
 
 	form := forms.New(r.PostForm)
 
@@ -160,10 +173,11 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation
-		http.Error(w, "my own error message", http.StatusSeeOther)
+		// http.Error(w, "my own error message", http.StatusSeeOther)
 		render.Template(w, r, "make-reservation.page.tmpl", &models.TemplateData{
-			Form: form,
-			Data: data,
+			Form:      form,
+			Data:      data,
+			StringMap: stringMap,
 		})
 		return
 	}
