@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/gob"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -62,8 +63,26 @@ func run() (*driver.DB, error) {
 
 	helpers.NewHelpers(&app)
 
+	//read flags
+	inProduction := flag.Bool("production", true, "Application is in production")
+	useCache := flag.Bool("cache", true, "Use template cache")
+	dbhost := flag.String("dbhost", "localhost", "Database host")
+	dbname := flag.String("dbname", "", "Database name")
+	dbuser := flag.String("dbuser", "", "Database user")
+	dbpass := flag.String("dbpass", "", "Database password")
+	dbport := flag.String("dbport", "5432", "Database port")
+	dbssl := flag.String("dbssl", "disable", "Database ssl settings (disable, prefer, require)")
+
+	flag.Parse()
+
+	if *dbname == "" || *dbuser == "" {
+		fmt.Println("Missing required flags")
+		os.Exit(1)
+	}
+
 	// change this to true when in Production
-	app.InProduction = false
+	app.InProduction = *inProduction
+	app.UseCache = *useCache
 
 	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	app.InfoLog = infoLog
@@ -80,7 +99,8 @@ func run() (*driver.DB, error) {
 
 	// connect to Database
 	log.Println("Connecting to Database...")
-	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=mysecretpassword")
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbhost, *dbport, *dbname, *dbuser, *dbpass, *dbssl)
+	db, err := driver.ConnectSQL(connectionString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying...")
 	}
