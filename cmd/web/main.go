@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/joho/godotenv"
 	"github.com/rajath002/bookings/internal/config"
 	"github.com/rajath002/bookings/internal/driver"
 	"github.com/rajath002/bookings/internal/handlers"
@@ -66,7 +67,7 @@ func run() (*driver.DB, error) {
 	//read flags
 	inProduction := flag.Bool("production", true, "Application is in production")
 	useCache := flag.Bool("cache", true, "Use template cache")
-	dbhost := flag.String("dbhost", "localhost", "Database host")
+	// dbhost := flag.String("dbhost", "localhost", "Database host")
 	dbname := flag.String("dbname", "", "Database name")
 	dbuser := flag.String("dbuser", "", "Database user")
 	dbpass := flag.String("dbpass", "", "Database password")
@@ -79,6 +80,15 @@ func run() (*driver.DB, error) {
 		fmt.Println("Missing required flags")
 		os.Exit(1)
 	}
+
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	dbhostEnv := os.Getenv("dbhost")
 
 	// change this to true when in Production
 	app.InProduction = *inProduction
@@ -99,7 +109,7 @@ func run() (*driver.DB, error) {
 
 	// connect to Database
 	log.Println("Connecting to Database...")
-	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", *dbhost, *dbport, *dbname, *dbuser, *dbpass, *dbssl)
+	connectionString := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=%s", dbhostEnv, *dbport, *dbname, *dbuser, *dbpass, *dbssl)
 	db, err := driver.ConnectSQL(connectionString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying...")
