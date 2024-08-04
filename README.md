@@ -82,3 +82,7 @@ soda migrate
 ```bash
 soda migrate down 
 ```
+
+### Create user seed migration
+
+`soda generate sql AddUserToUserTable`
