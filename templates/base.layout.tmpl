@@ -38,29 +38,6 @@
             }
         </style>
 
-        <style>
-            .my-footer {
-                height: 9em;
-                background-color: #163b65;
-                margin-top: 1.5em;
-                padding: 1em;
-                color: white;
-                font-size: 80%;
-            }
-
-            .room-image {
-                max-width: 50%;
-            }
-
-            .notie-container {
-                box-shadow: none;
-            }
-
-            .datepicker {
-                z-index: 10000;
-            }
-        </style>
-
     </head>
 
     <body>
@@ -98,13 +75,13 @@
                     {{if eq .IsAuthenticated 1}}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-bs-toggle="dropdown" aria-expanded="false">
                                 Admin
                             </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="/admin/dashboard">Dashboard</a>
-                                <a class="dropdown-item" href="/user/logout">Logout</a>
-                            </div>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/user/logout">Logout</a></li>
+                            </ul>
                         </li>
                     {{else}}
                     <a class="nav-link" href="/user/login">Login</a>
@@ -128,7 +105,7 @@
                 Brook field, New Jersey <br/>
                 USA<br/>
                 (111) 555-2122<br/>
-                
+
             </div>
 
             <div class="col"></div>
